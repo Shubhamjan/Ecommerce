@@ -1,0 +1,18 @@
+The path is too long. Move Kafka to a shorter path first:
+
+Step 1 — Copy Kafka to C drive root:
+powershellCopy-Item -Path "C:\Users\shubhamj\Downloads\kafka_2.13-3.9.2\kafka_2.13-3.9.2" -Destination "C:\kafka" -Recurse
+
+Step 2 — Navigate to the new path:
+powershellcd C:\kafka\bin\windows
+
+Step 3 — Start Zookeeper (Window 1):
+powershell.\zookeeper-server-start.bat ..\..\config\zookeeper.properties
+
+Step 4 — Start Kafka (Window 2):
+powershellcd C:\kafka\bin\windows
+.\kafka-server-start.bat ..\..\config\server.properties
+
+Step 5 — Verify (Window 3):
+powershellcd C:\kafka\bin\windows
+.\kafka-topics.bat --list --bootstrap-server localhost:9092

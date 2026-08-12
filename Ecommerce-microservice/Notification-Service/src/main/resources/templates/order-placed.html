@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; }
+        .container { max-width: 600px; margin: 30px auto;
+                     background: white; border-radius: 8px;
+                     padding: 30px; }
+        .header { background: #4CAF50; color: white;
+                  padding: 20px; border-radius: 8px 8px 0 0;
+                  text-align: center; }
+        .content { padding: 20px; }
+        .order-info { background: #f9f9f9; padding: 15px;
+                      border-radius: 5px; margin: 15px 0; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; text-align: left;
+                 border-bottom: 1px solid #ddd; }
+        th { background: #f2f2f2; }
+        .total { font-size: 18px; font-weight: bold;
+                 color: #4CAF50; margin-top: 10px; }
+        .footer { text-align: center; color: #888;
+                  font-size: 12px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h2>🛍️ Order Placed Successfully!</h2>
+        <p th:text="${appName}">ShopApp</p>
+    </div>
+    <div class="content">
+        <p>Hi there,</p>
+        <p>Your order has been placed successfully.
+            We will notify you once it's ready for pickup.</p>
+
+        <div class="order-info">
+            <p><strong>Order Number:</strong>
+                <span th:text="${orderNumber}"></span></p>
+            <p><strong>Email:</strong>
+                <span th:text="${userEmail}"></span></p>
+        </div>
+
+        <h3>Order Items</h3>
+        <table>
+            <tr>
+                <th>Product</th>
+                <th>Qty</th>
+                <th>Price</th>
+            </tr>
+            <tr th:each="item : ${items}">
+                <td th:text="${item.productName}"></td>
+                <td th:text="${item.quantity}"></td>
+                <td th:text="'₹' + ${item.price}"></td>
+            </tr>
+        </table>
+
+        <p class="total">
+            Total Amount: ₹<span th:text="${finalAmount}"></span>
+        </p>
+
+        <p>Please visit our shop to pickup your order
+            once you receive the ready notification.</p>
+    </div>
+    <div class="footer">
+        <p th:text="${appName} + ' — Thank you for shopping with us!'"></p>
+    </div>
+</div>
+</body>
+</html>

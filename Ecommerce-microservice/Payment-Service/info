@@ -1,0 +1,24 @@
+
+
+payment service claud link=>https://claude.ai/share/ed57c620-c990-4744-9ef8-d819645f9c6a
+
+
+1. User places order → Order Service publishes "order-placed"
+         ↓
+2. Payment Service listens → creates Payment record (INITIATED)
+         ↓
+3. User calls POST /payments/initiate
+   → Payment Service creates Razorpay order
+   → Returns razorpayOrderId + keyId to frontend
+         ↓
+4. Frontend opens Razorpay checkout popup
+   → User pays via UPI/Card/Netbanking
+   → Razorpay returns razorpayPaymentId + signature
+         ↓
+5. Frontend calls POST /payments/verify
+   → Payment Service verifies signature
+   → Updates PaymentStatus = SUCCESS
+   → Publishes "payment-success" event
+         ↓
+6. Notification Service listens → sends confirmation email
+   Order Service listens → updates order PaymentStatus = PAID

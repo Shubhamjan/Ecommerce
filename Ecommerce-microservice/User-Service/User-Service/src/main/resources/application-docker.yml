@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: User-Service
+
+  datasource:
+    url: jdbc:mysql://host.docker.internal:3306/user_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+    username: root
+    password: Shubham@242#
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  data:
+    redis:
+      host: redis
+      port: 6379
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: shubhamjangale600@gmail.com
+    password: ewaubctevqwgxwbr
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+server:
+  port: 8081
+
+app:
+  jwt:
+    secret: my-super-secret-key-that-is-at-least-32-characters
+    expiration-ms: 86400000
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka
+
+  instance:
+    prefer-ip-address: true

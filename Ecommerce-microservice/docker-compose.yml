@@ -1,0 +1,169 @@
+version: "3.8"
+
+services:
+  eureka-server:
+    build:
+      context: ./Eureka-Server
+      dockerfile: Dockerfile
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    restart: unless-stopped
+    networks:
+      - ecommerce-network
+      
+  api-gateway:
+    build:
+        context: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8004:8004"
+    environment:
+        SPRING_PROFILES_ACTIVE: Docker
+    depends_on:
+      - eureka-server
+    restart: unless-stopped
+    networks:
+      - ecommerce-network
+  
+  user-service:
+    build:
+        context: ./user-service
+    container_name: user-service
+    ports:
+      - "8081:8081"
+    environment:
+       SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      - eureka-server
+      - redis
+    
+    restart: unless-stopped
+    networks:
+      - ecommerce-network
+      
+  redis:
+    image: redis:7.2-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    networks:
+      - ecommerce-network
+  product-service:
+    build:
+      context: ./product-service
+    container_name: product-service
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+        - eureka-server
+        - redis
+        - kafka
+    restart: unless-stopped
+    network:
+      - ecommerce-network
+      
+  inventory-service:
+    build:
+       context: ./Inventory-Service
+    container_name: inventory-service
+    ports:
+      - "8089:8089"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+        - eureka-server
+        - kafka
+    restart: unless-stopped
+    networks:
+      - ecommerce-network
+  order-service:
+    build:
+        context: ./Order-Service
+    container_name: order-service
+    ports:
+      - "8086:8086"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+        - eureka-server
+        - redis
+        - kafka
+    restart: unless-stopped
+    networks:
+      - ecommerce-network
+      
+  cart-service:
+    build:
+        context: ./Cart-Service
+    container_name: cart-service
+    ports:
+       - "8087:8087"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+        - eureka-server
+        - redis
+    restart: unless-stopped
+    networks:
+      - ecommerce-network
+      
+      
+  notification-service:
+    build:
+        context: ./Notification-Service
+    container_name: notification-service
+    ports:
+       - "8088:8088"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+        - eureka-server
+        - kafka
+    restart: unless-stopped
+    networks:
+      - ecommerce-network
+  payment-service:
+    build:
+        context: ./Payment-Service
+    container_name: payment-service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+        - eureka-server
+        - kafka
+    restart: unless-stopped
+    networks:
+      - ecommerce-network
+  kafka:
+    image: apache/kafka:3.9.0
+    container_name: kafka
+    hostname: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+    restart: unless-stopped
+    networks:
+      - ecommerce-network
+networks:
+  ecommerce-network:
+    driver: bridge
+
+#build: Don't pull an image from Docker Hub. Instead, build an image using the Dockerfile in my project
+#dockerfile: This tells Docker Inside the build context (./Eureka-Server), use the file named Dockerfile

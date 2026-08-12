@@ -1,0 +1,9 @@
+Example Data Flow
+Category
+Electronics
+SubCategory
+Mobiles → Electronics
+Laptops → Electronics
+Product
+iPhone → Mobiles
+Dell Laptop → Laptops

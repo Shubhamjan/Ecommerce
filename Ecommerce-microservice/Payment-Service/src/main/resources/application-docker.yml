@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: Payment-Service
+
+  datasource:
+    url: jdbc:mysql://host.docker.internal:3306/payment_db
+    username: root
+    password: Shubham@242#
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  kafka:
+    bootstrap-servers: kafka:9092
+
+razorpay:
+  key:
+    id: id
+    secret: secret
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+    registry-fetch-interval-seconds: 5
+
+  instance:
+    prefer-ip-address: true
+
+server:
+  port: 8082

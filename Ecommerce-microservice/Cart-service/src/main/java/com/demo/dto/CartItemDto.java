@@ -1,0 +1,19 @@
+package com.demo.dto;
+
+import lombok.*;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class CartItemDto {
+    private Long id;
+    private Long productId;
+    private String productName;
+    private String imageUrl;
+    private String brand;
+    private double price;
+    private double discountedPrice;
+    private int quantity;
+    private double totalPrice;
+}

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; }
+        .container { max-width: 600px; margin: 30px auto;
+                     background: white; border-radius: 8px; padding: 30px; }
+        .header { background: #2196F3; color: white;
+                  padding: 20px; border-radius: 8px 8px 0 0;
+                  text-align: center; }
+        .content { padding: 20px; }
+        .payment-info { background: #f9f9f9; padding: 15px;
+                        border-radius: 5px; margin: 15px 0; }
+        .amount { font-size: 24px; font-weight: bold; color: #2196F3; }
+        .footer { text-align: center; color: #888;
+                  font-size: 12px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h2>✅ Payment Successful!</h2>
+        <p th:text="${appName}">ShopApp</p>
+    </div>
+    <div class="content">
+        <p>Hi there,</p>
+        <p>Your payment has been received successfully!</p>
+
+        <div class="payment-info">
+            <p><strong>Order Number:</strong>
+                <span th:text="${orderNumber}"></span></p>
+            <p><strong>Payment ID:</strong>
+                <span th:text="${razorpayPaymentId}"></span></p>
+            <p><strong>Email:</strong>
+                <span th:text="${userEmail}"></span></p>
+            <p class="amount">
+                Amount Paid: ₹<span th:text="${amount}"></span>
+            </p>
+        </div>
+
+        <p>Your order is being prepared.
+            We will notify you when it's ready for pickup!</p>
+    </div>
+    <div class="footer">
+        <p th:text="${appName} + ' — Thank you for your payment!'"></p>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; }
+        .container { max-width: 600px; margin: 30px auto;
+                     background: white; border-radius: 8px; padding: 30px; }
+        .header { background: #FF9800; color: white;
+                  padding: 20px; border-radius: 8px 8px 0 0;
+                  text-align: center; }
+        .header.ready { background: #4CAF50; }
+        .header.cancelled { background: #f44336; }
+        .content { padding: 20px; }
+        .status-info { background: #fff8e1; padding: 15px;
+                       border-radius: 5px; margin: 15px 0; }
+        .status-badge { display: inline-block; padding: 5px 15px;
+                        border-radius: 20px; font-weight: bold;
+                        background: #FF9800; color: white; }
+        .footer { text-align: center; color: #888;
+                  font-size: 12px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header"
+         th:classappend="${orderStatus == 'READY'} ? 'ready' :
+                          (${orderStatus == 'CANCELLED'} ? 'cancelled' : '')">
+        <h2 th:if="${orderStatus == 'READY'}">
+            🎉 Your Order is Ready for Pickup!
+        </h2>
+        <h2 th:if="${orderStatus == 'CANCELLED'}">
+            ❌ Order Cancelled
+        </h2>
+        <h2 th:if="${orderStatus == 'COMPLETED'}">
+            ✅ Order Completed!
+        </h2>
+        <h2 th:unless="${orderStatus == 'READY' or
+                         orderStatus == 'CANCELLED' or
+                         orderStatus == 'COMPLETED'}">
+            📦 Order Status Update
+        </h2>
+        <p th:text="${appName}">ShopApp</p>
+    </div>
+    <div class="content">
+        <p>Hi there,</p>
+
+        <p th:if="${orderStatus == 'READY'}">
+            Great news! Your order is ready. Please visit our shop to pickup.
+        </p>
+        <p th:if="${orderStatus == 'CANCELLED'}">
+            Your order has been cancelled.
+            If you paid online, a refund will be initiated shortly.
+        </p>
+        <p th:if="${orderStatus == 'COMPLETED'}">
+            Thank you! Your order has been successfully picked up.
+        </p>
+        <p th:unless="${orderStatus == 'READY' or
+                        orderStatus == 'CANCELLED' or
+                        orderStatus == 'COMPLETED'}">
+            Your order status has been updated.
+        </p>
+
+        <div class="status-info">
+            <p><strong>Order Number:</strong>
+                <span th:text="${orderNumber}"></span></p>
+            <p><strong>Order Status:</strong>
+                <span class="status-badge"
+                      th:text="${orderStatus}"></span></p>
+        </div>
+    </div>
+    <div class="footer">
+        <p th:text="${appName} + ' — Thank you for shopping with us!'"></p>
+    </div>
+</div>
+</body>
+</html>

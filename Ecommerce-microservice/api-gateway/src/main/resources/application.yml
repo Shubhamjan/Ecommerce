@@ -1,0 +1,86 @@
+
+spring:
+  profiles:
+    active: local
+#spring:
+#  application:
+#    name: api-gateway
+#  cloud:
+#    gateway:
+#      discovery:
+#        locator:
+#          enable: true
+#          lower-case-service-id: true
+#      routes:
+#        - id: USER-SERVICE
+#          uri: lb://user-service
+#          predicates:
+#            - Path=/api/users/**
+#            - Method=POST
+#          filters:
+#            - name: RequestRateLimiter
+#              args:
+#                redis-rate-limiter.replenishRate: 3      # 5 requests per second
+#                redis-rate-limiter.burstCapacity: 5     # max burst up to 10
+#                redis-rate-limiter.requestedTokens: 1
+#                key-resolver: "#{@loginKeyResolver}"        # limit by IP
+#
+#                  # ── USER SERVICE — ALL OTHER ENDPOINTS ─────────
+#                  # No rate limiting on other user endpoints
+#                  # ──────────────────────────────────────────────
+#        - id: USER-SERVICE
+#          uri: lb://user-service
+#          predicates:
+#            - Path=/api/users/**
+#
+#
+#        - id: PRODUCT-SERVICE
+#          uri: lb://product-service
+#          predicates:
+#            - Path=/api/product/**
+#
+#        - id: ORDER-SERVICE
+#          uri: lb://order-service
+#          predicates:
+#            - Path=/api/order/**
+#
+#        - id: INVENTORY-SERVICE
+#          uri: lb://inventory-service
+#          predicates:
+#            - Path=/api/inventory/**
+#
+#        - id: CART-SERVICE
+#          uri: lb://cart-service
+#          predicates:
+#            - Path=/api/cart/**
+#
+#        - id: PAYMENT-SERVICE
+#          uri: lb://payment-service
+#          predicates:
+#            - Path=/api/payments/**
+#
+#    loadbalancer:
+#      retry:
+#        enabled: true
+#  #        filters:
+#  #          - CustomRouteFilter
+#
+#
+#server:
+#  port: 8084
+#
+#jwt:
+#  secret: my-super-secret-key-that-is-at-least-32-characters
+#  expiration-ms: 86400000
+#
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka
+#
+#    registry-fetch-interval-seconds: 5
+#
+#
+#logging:
+#  level:
+#    org.springframework.cloud.gateway: DEBUG

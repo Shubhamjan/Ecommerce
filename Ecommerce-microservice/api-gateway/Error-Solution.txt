@@ -1,0 +1,81 @@
+1. Error: An expected CSRF token cannot be found
+
+Context (your case):
+
+API worked fine when calling the User Service directly
+Same request failed when going through the API Gateway (Spring Cloud Gateway)
+Gateway has Spring Security + custom JWT filter
+Cause
+
+Spring Security enables CSRF protection by default.
+
+At the API Gateway, CSRF was still enabled, so:
+
+Your POST /login request did not include a CSRF token
+Spring Security blocked the request before your JWT filter executed
+
+That’s why:
+
+Direct call to microservice → ✅ worked (CSRF disabled there)
+Call via gateway → ❌ failed (CSRF enabled at gateway)
+Key Point
+
+👉 Spring Security runs before your JWT filter
+👉 So CSRF check happens first, and request never reaches your JWT logic
+
+Fix
+
+Disable CSRF in the API Gateway (Reactive Security config):
+
+http.csrf(csrf -> csrf.disable());
+
+.........................................................................................................
+
+📌 Eureka Hostname Issue (UnknownHostException)
+❗ Problem
+
+API Gateway fails with:
+
+UnknownHostException: Failed to resolve 'hostname'
+🔍 Cause
+
+Eureka registers services using hostname (e.g. FIS-021system.fis.local) instead of IP.
+
+Gateway tries to call:
+
+http://hostname:port
+
+But the system cannot resolve that hostname → ❌ request fails.
+
+✅ Solution
+
+Add this in microservice (e.g., User-Service):
+
+eureka:
+  instance:
+    prefer-ip-address: true
+🔄 What it does
+
+Changes service registration:
+
+Before:
+
+USER-SERVICE → hostname:8081
+
+After:
+
+USER-SERVICE → 192.168.x.x:8081 (or localhost)
+
+👉 Gateway can now resolve and call the service successfully.
+
+⚠️ Important
+
+Restart services in order:
+
+1. Eureka Server
+2. Microservice (User-Service)
+3. API Gateway
+🎯 Result
+❌ UnknownHostException → Fixed
+✅ Gateway routing works
+✅ API calls succeed

@@ -1,0 +1,85 @@
+
+*****************************RateLimiting************************88
+
+1. Auth Endpoints — Brute Force Attack
+Scenario: Hacker tries to guess your password
+Hacker script:
+POST /api/auth/login  → { email: "john@gmail.com", password: "123456" }   → 401
+POST /api/auth/login  → { email: "john@gmail.com", password: "password" }  → 401
+POST /api/auth/login  → { email: "john@gmail.com", password: "john1234" }  → 401
+... 1000 attempts in 1 minute
+
+Without rate limit → hacker keeps trying until they guess it
+With rate limit    → blocked after 5 attempts, wait 1 minute
+
+2. Payment Endpoints — Payment Fraud
+Scenario: Someone has a stolen credit card and keeps trying
+Fraudster:
+POST /api/payments/create-order → amount: 999  → card declined
+POST /api/payments/create-order → amount: 999  → card declined
+POST /api/payments/create-order → amount: 999  → card declined
+... 50 attempts in 1 minute
+
+Without rate limit → keeps hammering your payment gateway
+                     Razorpay charges you per API call 💸
+With rate limit    → blocked after 3 failed attempts
+
+3. Order Endpoints — Inventory Manipulation
+Scenario: Someone tries to block stock during a sale
+Sneaky user during Big Billion Day sale:
+POST /api/orders/place → iPhone 15  (books last 5 in stock)
+POST /api/orders/place → iPhone 15  (books more)
+POST /api/orders/place → iPhone 15  (books more)
+... then cancels all orders after sale ends
+
+Without rate limit → can manipulate your entire inventory
+With rate limit    → max 10 orders per minute per user
+
+4. Search & Product Listing — Scraping
+Scenario: Competitor scrapes your entire product catalog + prices
+Competitor bot:
+GET /api/products/search?q=shoes    → 200 ✅
+GET /api/products/search?q=shirts   → 200 ✅
+GET /api/products/search?q=watches  → 200 ✅
+... 10,000 requests in 1 hour
+
+Without rate limit → your entire catalog + pricing stolen
+                     your server slows down for real users
+With rate limit    → blocked after 30 requests/minute per IP
+
+5. OTP Endpoints — SMS Cost Abuse
+Scenario: Someone uses your OTP to send unlimited SMS
+Abuser:
+POST /api/auth/send-otp → { phone: "9999999999" } → SMS sent 💸
+POST /api/auth/send-otp → { phone: "9999999999" } → SMS sent 💸
+POST /api/auth/send-otp → { phone: "9999999999" } → SMS sent 💸
+... 500 times
+
+Without rate limit → you pay for 500 SMS (Twilio/MSG91 charges per SMS)
+With rate limit    → max 3 OTPs per 10 minutes per phone number
+
+6. Review Endpoints — Fake Reviews
+Scenario: Competitor posts fake bad reviews on your products
+Competitor bot:
+POST /api/products/123/review → ⭐ "Worst product ever"
+POST /api/products/123/review → ⭐ "Don't buy this"
+POST /api/products/123/review → ⭐ "Total waste of money"
+... 100 reviews in 1 hour from same account
+
+Without rate limit → product rating destroyed
+With rate limit    → max 5 reviews per hour per user
+
+Summary in One Table
+Endpoint          Who to limit by    Limit              Why
+─────────────────────────────────────────────────────────────────
+/auth/login       IP                 5 / minute         Brute force
+/auth/send-otp    Phone number       3 / 10 minutes     SMS cost
+/payments/*       User + IP          3 / minute         Fraud
+/orders/place     UserId             10 / minute        Inventory abuse
+/products/search  IP                 30 / minute        Scraping
+/reviews          UserId             5 / hour           Fake reviews
+
+
+
+**command to run the request to test ratelimiting
+for i in {1..10}; do curl -s -o /dev/null -w "Request $i: %{http_code}\n" -X POST http://localhost:8084/api/users/login -H "Content-Type: application/json" -d '{"email":"shubham@gmail.com","password":"shubham123"}' & done; wait
