@@ -1,6 +1,6 @@
 spring:
-  active:
-    profile: local
+  profiles:
+    active: local
 #spring:
 #  application:
 #    name: User-Service
